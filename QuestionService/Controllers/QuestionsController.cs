@@ -72,7 +72,7 @@ namespace QuestionService.Controllers
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (question is null) return NotFound();
             await db.Questions.Where(x => x.Id == id)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ViewCount, x=> x.ViewCount+1));
+                .ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ViewCount, x => x.ViewCount + 1));
 
             return question;
         }
@@ -207,6 +207,23 @@ namespace QuestionService.Controllers
             await bus.PublishAsync(new AnswerAccepted(questionId));
 
             return NoContent();
+        }
+
+        [HttpGet("error")]
+        public ActionResult GetErrorResponses(int code)
+        {
+            ModelState.AddModelError("Problem one", "Validation problem one");
+            ModelState.AddModelError("Problem two", "Validation problem two");
+            return code switch
+            {
+                400 => BadRequest("Opposite of good request"),
+                401 => Unauthorized(),
+                403 => Forbid(),
+                404 => NotFound(),
+                500 => throw new Exception("This is a server error"),
+                _ => ValidationProblem(ModelState)
+
+            };
         }
     }
 }

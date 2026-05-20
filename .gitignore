@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 *.Development.json
+/infra/.env.Production
+/infra/realms/overflow-realm.json

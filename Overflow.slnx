@@ -1,6 +1,12 @@
 <Solution>
   <Folder Name="/common/">
+    <Project Path="Common/Common.csproj" Id="a84195fa-444b-44a1-a84e-5297a7a0b9d6" />
     <Project Path="Contracts/Contracts.csproj" Id="4405aa6e-fd97-423c-be3e-84289c8f8911" />
+  </Folder>
+  <Folder Name="/infra/">
+    <File Path="infra/.env" />
+    <File Path="infra/.env.Production" />
+    <File Path="infra/docker-compose.yaml" />
   </Folder>
   <Folder Name="/services/">
     <Project Path="QuestionService/QuestionService.csproj" />
