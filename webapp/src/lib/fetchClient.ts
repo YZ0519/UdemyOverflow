@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 
 export async function fetchClient<T>(
@@ -9,8 +10,13 @@ export async function fetchClient<T>(
   const apiUrl = process.env.API_URL;
   if (!apiUrl) throw new Error("Missing API URL");
 
+  const session = await auth();
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    ...(session?.accessToken
+      ? { Authorization: `Bearer ${session.accessToken}` }
+      : {}),
     ...(rest.headers || {}),
   };
 
@@ -35,14 +41,24 @@ export async function fetchClient<T>(
 
     let message = "";
 
-    if (typeof parsed === "string") {
-      message = parsed;
-    } else if (parsed?.message) {
-      message = parsed.message;
+    if (response.status === 401) {
+      const authHeader = response.headers.get("WWW-Authenticate");
+      if (authHeader?.includes("error_description")) {
+        const match = authHeader?.match(/error_description="(.+?)"/);
+        if (match) message = match[1];
+      } else {
+        message = "You must be logged in to do that";
+      }
     }
 
     if (!message) {
-      message = response.statusText || getFallbackMessage(response.status);
+      if (typeof parsed === "string") {
+        message = parsed;
+      } else if (parsed?.message) {
+        message = parsed.message;
+      } else {
+        getFallbackMessage(response.status);
+      }
     }
 
     return { data: null, error: { message, status: response.status } };

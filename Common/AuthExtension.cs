@@ -18,7 +18,8 @@ namespace Common
                         "http://localhost:6001/realms/overflow",
                         "http://keycloak/realms/overflow",
                         "http://id.overflow.local/realms/overflow"
-                    ]
+                    ],
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 

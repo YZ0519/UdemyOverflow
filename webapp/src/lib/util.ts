@@ -15,6 +15,13 @@ export function errorToast(error: { message: string; status?: number }) {
     color: "danger",
   });
 }
+export function successToast(message: string, title?: string) {
+  return addToast({
+    title: title || "Success!",
+    description: message,
+    color: "success",
+  });
+}
 
 export function handleError(error: { message: string; status: number }) {
   if (error.status === 500) {
