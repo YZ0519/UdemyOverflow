@@ -68,6 +68,10 @@ var yarp = builder.AddYarp("gateway")
     .WithContainerRuntimeArgs("--add-host=host.docker.internal:host-gateway");
 #pragma warning restore ASPIRECERTIFICATES001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
+var webapp = builder.AddJavaScriptApp("webapp", "../webapp")
+    .WithReference(keycloak)
+    .WithHttpEndpoint(env: "PORT", port: 3000);
+
 if (!builder.Environment.IsDevelopment())
 {
     builder.AddContainer("nginx-proxy","nginxproxy/nginx-proxy","1.8")
