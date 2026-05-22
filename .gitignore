@@ -364,3 +364,8 @@ FodyWeavers.xsd
 *.Development.json
 /infra/.env.Production
 /infra/realms/overflow-realm.json
+/infra/infra/.env.Production
+/infra/devcerts/overflow.local.crt
+/infra/devcerts/overflow.local.key
+/infra/devcerts/install-key.pem
+/infra/devcerts/install.pem

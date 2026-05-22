@@ -1,6 +1,5 @@
 "use client";
 
-import RichTextEditor from "@/components/rte/RichTextEditor";
 import { postQuestion, updateQuestion } from "@/lib/actions/question-actions";
 import { questionSchema, QuestionSchema } from "@/lib/schemas/questionSchema";
 import { Question } from "@/lib/types";
@@ -15,6 +14,12 @@ import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useEffect, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/rte/RichTextEditor"),
+  { ssr: false },
+);
 
 type Props = {
   questionToUpdate?: Question;
