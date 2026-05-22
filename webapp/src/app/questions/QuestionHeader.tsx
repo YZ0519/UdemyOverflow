@@ -1,5 +1,5 @@
 "use client";
-import { useTagStore } from "@/lib/useTagStore";
+import { useTagStore } from "@/lib/hooks/useTagStore";
 import { Button } from "@heroui/button";
 import { Tab, Tabs } from "@heroui/tabs";
 import Link from "next/link";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function QuestionHeader({ tag, total }: Props) {
-  const selectedTag = useTagStore((state) => state.getTagBySlug(tag!));
+  const selectedTag = useTagStore((state) => state.getTagBySlug(tag ?? ""));
 
   const tabs = [
     { key: "newest", label: "Newest" },

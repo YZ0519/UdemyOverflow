@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning lang="en" className="h-full">
-      <body className="flex flex-col bg-stone-200 dark:bg-default-50 h-full">
+      <body suppressHydrationWarning className="flex flex-col bg-stone-200 dark:bg-default-50 h-full">
         <Providers>
           <TopNav />
           <div className="flex grow overflow-auto">
