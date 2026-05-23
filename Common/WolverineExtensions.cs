@@ -16,26 +16,32 @@ namespace Common
     {
         public static async Task UseWolverineWithRabbitMqAsync(this IHostApplicationBuilder builder, Action<WolverineOptions> configureMessaging)
         {
-            var retryPolicy = Policy.Handle<BrokerUnreachableException>()
-                .Or<SocketException>()
-                .WaitAndRetryAsync(retryCount: 5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                (exception, timeSpan, retryCount) =>
-                {
-                    Console.WriteLine($"Retry attempt {retryCount} failed. Retrying in " +
-                        $"{timeSpan.TotalSeconds} seconds...");
-                });
-
-            await retryPolicy.ExecuteAsync(async () =>
+            var isEfDesignTime = AppDomain.CurrentDomain.FriendlyName.StartsWith("ef", StringComparison.OrdinalIgnoreCase);
+            if (!isEfDesignTime)
             {
-                var endpoint = builder.Configuration.GetConnectionString("messaging")
-                ?? throw new InvalidOperationException("Messaging connection string not found.");
+                var retryPolicy = Policy.Handle<BrokerUnreachableException>()
+                    .Or<SocketException>()
+                    .WaitAndRetryAsync(retryCount: 5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    (exception, timeSpan, retryCount) =>
+                    {
+                        Console.WriteLine($"Retry attempt {retryCount} failed. Retrying in " +
+                            $"{timeSpan.TotalSeconds} seconds...");
+                    });
 
-                var factory = new ConnectionFactory
+                await retryPolicy.ExecuteAsync(async () =>
                 {
-                    Uri = new Uri(endpoint)
-                };
-                await using var connection = await factory.CreateConnectionAsync();
-            });
+                    var endpoint = builder.Configuration.GetConnectionString("messaging")
+                    ?? throw new InvalidOperationException("Messaging connection string not found.");
+
+                    var factory = new ConnectionFactory
+                    {
+                        Uri = new Uri(endpoint)
+                    };
+                    await using var connection = await factory.CreateConnectionAsync();
+                });
+            }
+
+
 
 
             builder.Services.AddOpenTelemetry().WithTracing(traceProviderBuilder =>
@@ -50,7 +56,7 @@ namespace Common
             {
                 opts.UseRabbitMqUsingNamedConnection("messaging")
                 .AutoProvision()
-                .DeclareExchange("questions");
+                .UseConventionalRouting();
 
                 configureMessaging(opts);
             });

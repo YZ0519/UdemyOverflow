@@ -9,6 +9,7 @@
     <File Path="infra/docker-compose.yaml" />
   </Folder>
   <Folder Name="/services/">
+    <Project Path="ProfileService/ProfileService.csproj" />
     <Project Path="QuestionService/QuestionService.csproj" />
     <Project Path="SearchService/SearchService.csproj" />
   </Folder>

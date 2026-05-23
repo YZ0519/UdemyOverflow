@@ -24,6 +24,8 @@ namespace Common
                 };
             });
 
+            services.AddAuthorizationBuilder();
+
             return services;
         }
     }

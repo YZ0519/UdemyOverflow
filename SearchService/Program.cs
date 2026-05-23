@@ -1,6 +1,4 @@
 using System.Text.RegularExpressions;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using SearchService.Data;
 using SearchService.Models;
 using Typesense;
@@ -16,10 +14,6 @@ builder.AddServiceDefaults();
 
 await builder.UseWolverineWithRabbitMqAsync(opts =>
 {
-    opts.ListenToRabbitQueue("questions.search", cfg =>
-    {
-        cfg.BindExchange("questions");
-    });
     opts.ApplicationAssembly = typeof(Program).Assembly;
 });
 
