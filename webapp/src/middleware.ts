@@ -12,5 +12,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/question/ask", "/questions/:id/edit", "session"],
+  matcher: ["/question/ask", "/questions/:id/edit", "/session"],
 };

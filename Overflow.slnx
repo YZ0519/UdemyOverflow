@@ -2,6 +2,7 @@
   <Folder Name="/common/">
     <Project Path="Common/Common.csproj" Id="a84195fa-444b-44a1-a84e-5297a7a0b9d6" />
     <Project Path="Contracts/Contracts.csproj" Id="4405aa6e-fd97-423c-be3e-84289c8f8911" />
+    <Project Path="Reputation/Reputation.csproj" Id="1f79fe89-c42c-4299-8403-6b1b6666974b" />
   </Folder>
   <Folder Name="/infra/">
     <File Path="infra/.env" />
@@ -12,6 +13,8 @@
     <Project Path="ProfileService/ProfileService.csproj" />
     <Project Path="QuestionService/QuestionService.csproj" />
     <Project Path="SearchService/SearchService.csproj" />
+    <Project Path="StatsService/StatsService.csproj" />
+    <Project Path="VoteService/VoteService.csproj" />
   </Folder>
   <Project Path="Overflow.AppHost/Overflow.AppHost.csproj" />
   <Project Path="Overflow.ServiceDefaults/Overflow.ServiceDefaults.csproj" />

@@ -1,17 +1,24 @@
 import { Question } from "@/lib/types";
-import VotingButtons from "./VotingButtons";
-import QuestionFooter from "./QuestionFooter";
+import VotingButtons from "@/app/questions/[id]/VotingButtons";
+import QuestionFooter from "@/app/questions/[id]/QuestionFooter";
+import { getCurrentUser } from "@/lib/actions/auth-actions";
 
-type Props = {
+export default async function QuestionContent({
+  question,
+}: {
   question: Question;
-};
-export default function QuestionContent({ question }: Props) {
+}) {
+  const currentUser = await getCurrentUser();
   return (
-    <div className="flex border-b pb-4 px-6">
-      <VotingButtons />
+    <div className="flex border-b pb-3 px-6">
+      <VotingButtons
+        target={question}
+        askerId={question?.askerId}
+        currentUserId={currentUser.id}
+      />
       <div className="flex flex-col w-full">
         <div
-          className="flex-1 mt-4 ml-6 prose dark:prose-invert max-w-none"
+          className="flex-1 mt-4 ml-6 prose max-w-none dark:prose-invert"
           dangerouslySetInnerHTML={{ __html: question.content }}
         />
         <QuestionFooter question={question} />

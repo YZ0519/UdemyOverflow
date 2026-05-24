@@ -8,6 +8,7 @@ using QuestionService.Data;
 using QuestionService.DTOs;
 using QuestionService.Models;
 using QuestionService.Services;
+using Reputation;
 using System.Security.Claims;
 using Wolverine;
 
@@ -41,6 +42,15 @@ namespace QuestionService.Controllers
 
             db.Questions.Add(question);
             await db.SaveChangesAsync();
+
+            var slugs = question.TagSlugs.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+
+            if(slugs.Length > 0)
+            {
+                await db.Tags
+                    .Where(t => Enumerable.Contains(slugs, t.Slug))
+                    .ExecuteUpdateAsync(x => x.SetProperty(t => t.UsageCount, t => t.UsageCount + 1));
+            }
 
             await bus.PublishAsync(new QuestionCreated(
                 question.Id,
@@ -93,6 +103,12 @@ namespace QuestionService.Controllers
             if (!await tagService.AreTagsValidAsync(dto.Tags))
                 return BadRequest("Invalid tags");
 
+            var original = question.TagSlugs.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            var incoming = dto.Tags.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+
+            var removed = original.Except(incoming,StringComparer.OrdinalIgnoreCase).ToArray();
+            var added = incoming.Except(original, StringComparer.OrdinalIgnoreCase).ToArray();
+
             var sanitizer = new HtmlSanitizer();
 
             question.Title = dto.Title;
@@ -101,6 +117,20 @@ namespace QuestionService.Controllers
             question.UpdatedAt = DateTime.UtcNow;
 
             await db.SaveChangesAsync();
+
+            if(removed.Length > 0)
+            {
+                await db.Tags
+                    .Where(t => Enumerable.Contains(removed, t.Slug) && t.UsageCount > 0)
+                    .ExecuteUpdateAsync(x => x.SetProperty(t => t.UsageCount, t => t.UsageCount - 1));
+            }
+
+            if (added.Length > 0)
+            {
+                await db.Tags
+                    .Where(t => Enumerable.Contains(added, t.Slug))
+                    .ExecuteUpdateAsync(x => x.SetProperty(t => t.UsageCount, t => t.UsageCount + 1));
+            }
 
             await bus.PublishAsync(new QuestionUpdated(question.Id, question.Title, question.Content,
             question.TagSlugs.AsArray()));
@@ -213,6 +243,7 @@ namespace QuestionService.Controllers
             await db.SaveChangesAsync();
 
             await bus.PublishAsync(new AnswerAccepted(questionId));
+            await bus.PublishAsync(ReputationHelper.MakeEvent(answer.UserId, ReputationReason.AnswerAccepted, question.AskerId));
 
             return NoContent();
         }

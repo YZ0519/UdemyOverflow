@@ -1,9 +1,11 @@
 "use client";
+
 import {
-  TagIcon,
-  UserIcon,
   HomeIcon,
   QuestionMarkCircleIcon,
+  TagIcon,
+  UserGroupIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
 import { Listbox, ListboxItem } from "@heroui/listbox";
 import { usePathname } from "next/navigation";
@@ -20,25 +22,38 @@ export default function SideMenu() {
       href: "/questions",
     },
     { key: "tags", icon: TagIcon, text: "Tags", href: "/tags" },
-    { key: "session", icon: UserIcon, text: "User Session", href: "/session" },
+    { key: "session", icon: UserIcon, text: "User session", href: "/session" },
+    {
+      key: "profiles",
+      icon: UserGroupIcon,
+      text: "Profiles",
+      href: "/profiles",
+    },
   ];
+
+  const selectedKey =
+    navLinks.find((link) => link.href === pathname)?.key ?? null;
+
   return (
     <Listbox
       aria-label="nav links"
       variant="faded"
       items={navLinks}
       className="sticky top-20 ml-6"
+      selectionMode="single"
+      selectedKeys={selectedKey ? [selectedKey] : []}
+      itemClasses={{
+        base: "data-[selected=true]:text-secondary",
+        title: "text-lg",
+      }}
     >
       {({ key, href, icon: Icon, text }) => (
         <ListboxItem
           href={href}
-          aria-label={key}
+          aria-labelledby={key}
           aria-describedby={text}
+          key={key}
           startContent={<Icon className="h-6" />}
-          classNames={{
-            base: pathname === href ? "text-secondary" : "",
-            title: "text-lg",
-          }}
         >
           {text}
         </ListboxItem>
