@@ -17,6 +17,7 @@ namespace Common
                     ValidIssuers = [
                         "http://localhost:6001/realms/overflow",
                         "http://keycloak/realms/overflow",
+                        "http://keycloak:8080/realms/overflow",
                         "http://id.overflow.local/realms/overflow",
                         "https://id.overflow.local/realms/overflow"
                     ],

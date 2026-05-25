@@ -3,7 +3,8 @@
     "allow": [
       "Bash(find:*)",
       "Bash(xargs grep:*)",
-      "Bash(cat *.cs)"
+      "Bash(cat *.cs)",
+      "Bash(rm:*)"
     ]
   }
 }
