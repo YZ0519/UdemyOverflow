@@ -1,25 +1,28 @@
 import { getQuestions } from "@/lib/actions/question-actions";
 import QuestionCard from "./QuestionCard";
 import QuestionHeader from "./QuestionHeader";
+import AppPagination from "@/components/AppPagination";
+import { QuestionParams } from "@/lib/types";
 
 export default async function QuestionsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ tag?: string }>;
+  searchParams?: Promise<QuestionParams>;
 }) {
   const params = await searchParams;
-  const { data: questions, error } = await getQuestions(params?.tag);
+  const { data: questions, error } = await getQuestions(params);
 
   if (error) throw error;
 
   return (
     <>
-      <QuestionHeader total={questions?.length || 0} tag={params?.tag} />
-      {questions?.map((question) => (
+      <QuestionHeader total={questions?.totalCount || 0} tag={params?.tag} />
+      {questions?.items.map((question) => (
         <div key={question.id} className="py-4 not-last:border-b w-full flex">
           <QuestionCard key={question.id} question={question} />
         </div>
       ))}
+      <AppPagination totalCount={questions?.totalCount ?? 0} />
     </>
   );
 }

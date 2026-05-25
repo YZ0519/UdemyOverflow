@@ -44,18 +44,6 @@ app.MapGet("/profiles/batch", async (string ids, ProfileDbContext db) =>
 });
 
 // Configure the HTTP request pipeline.
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-
-try
-{
-    var context = services.GetRequiredService<ProfileDbContext>();
-    await context.Database.MigrateAsync();
-}
-catch (Exception e)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(e, "An error occurred while migrating the database.");
-}
+await app.MigrateDbContextAsync<ProfileDbContext>();
 
 app.Run();

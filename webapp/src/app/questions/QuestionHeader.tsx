@@ -3,6 +3,8 @@ import { useTagStore } from "@/lib/hooks/useTagStore";
 import { Button } from "@heroui/button";
 import { Tab, Tabs } from "@heroui/tabs";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Key } from "react";
 
 type Props = {
   tag?: string;
@@ -10,6 +12,9 @@ type Props = {
 };
 
 export default function QuestionHeader({ tag, total }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const selectedTag = useTagStore((state) => state.getTagBySlug(tag ?? ""));
 
   const tabs = [
@@ -17,6 +22,15 @@ export default function QuestionHeader({ tag, total }: Props) {
     { key: "active", label: "Active" },
     { key: "unanswered", label: "Unanswered" },
   ];
+
+  const selected = searchParams.get("sort") ?? "newest";
+
+  const handleTabChange = (tab: Key) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", tab.toString());
+    router.replace(`?${params.toString()}`);
+  };
+
   return (
     <div className="flex flex-col w-full border-b gap-4 pb-4">
       <div className="flex justify-between px-6">
@@ -36,7 +50,7 @@ export default function QuestionHeader({ tag, total }: Props) {
           {total === 1 ? "Question" : "Questions"}
         </div>
         <div className="flex items-center">
-          <Tabs>
+          <Tabs selectedKey={selected} onSelectionChange={handleTabChange}>
             {tabs.map((item) => (
               <Tab key={item.key} title={item.label} />
             ))}
